@@ -3,7 +3,16 @@
 #include "pgSolver2.h"
 #include "strategyImprovement.h"
 
-void graphInfo(long **G, long n, int tCount, lxw_worksheet *worksheet) {
+/**
+ * @brief Writes the graph info to the xlsx file and determines the maximum priority in the game
+ * 
+ * @param G 
+ * @param n 
+ * @param tCount 
+ * @param worksheet 
+ * @return int the maximum priority in the graph
+ */
+int graphInfo(long **G, long n, int tCount, lxw_worksheet *worksheet) {
     worksheet_write_number(worksheet, tCount+2, 2, n, NULL);
 
     long eCount = 0; //number of edges
@@ -21,6 +30,8 @@ void graphInfo(long **G, long n, int tCount, lxw_worksheet *worksheet) {
 
     worksheet_write_number(worksheet, tCount+2, 3, maxP, NULL);
     worksheet_write_number(worksheet, tCount+2, 4, eCount, NULL);
+
+    return maxP;
 }
 
 /**
@@ -52,23 +63,17 @@ int oneFileBenchmark(char *fileName, long nMax, long pMax, int tCount, lxw_workb
 
     printf("%s\n", fileName);
 
-    graphInfo(G, n, tCount, worksheet);
+    int maxP = graphInfo(G, n, tCount, worksheet); //maximum priority in the graph
 
-    time_t t1, t2, t3, start, end;
+    int verify = 1;
 
-    GC = duplicateGraph(G, n);
-    time(&start);
-    int *W1 = pgSolver1(GC, n);
-    time(&end);
-    t1 = end - start;
-    freeGraph(n, GC);
-
-    worksheet_write_number(worksheet, tCount+2, 5, t1, NULL);
+    time_t t1, t2, t3, start, end;    
     
+    int *W1, *W2, *W3;
 
     GC = duplicateGraph(G, n);
     time(&start);
-    int *W2 = pgSolver2(GC, n);
+    W2 = pgSolver2(GC, n);
     time(&end);
     t2 = end - start;
     freeGraph(n, GC);
@@ -77,18 +82,46 @@ int oneFileBenchmark(char *fileName, long nMax, long pMax, int tCount, lxw_workb
 
     GC = duplicateGraph(G, n);
     time(&start);
-    int *W3 = pgSolver3(GC, n);
+    W3 = pgSolver3(GC, n);
     time(&end);
     t3 = end - start;
     freeGraph(n, GC);
 
     worksheet_write_number(worksheet, tCount+2, 7, t3, NULL);
 
+    if(maxP <= 1 || (n <= 300 && maxP <= 4)) {
+        //for higher values, pgSolver1 would take an incredibly long time 
+        GC = duplicateGraph(G, n);
+        time(&start);
+        W1 = pgSolver1(GC, n);
+        time(&end);
+        t1 = end - start;
+        freeGraph(n, GC);
+        worksheet_write_number(worksheet, tCount+2, 5, t1, NULL);
+    } else {
+        t1 = 0;
+        worksheet_write_string(worksheet, tCount+2, 5, "-1", NULL); //show this algorithm was not used
+        W1 = W2;
+    }
+
+    for(int i=0; i<n; i++) {
+        if(W1[i] != W2[i] || W1[i] != W3[i]) {
+            verify = 0;
+        }
+    }
+
+    if(verify) {
+        worksheet_write_string(worksheet, tCount+2, 8, "Passed", NULL);
+    }
+    else worksheet_write_string(worksheet, tCount+2, 8, "Failed", NULL);
+
     
 
     printf("PGSolver1: %lds; PGSolver2: %lds; PGSolver3: %lds\n", t1, t2, t3);
 
-    free(W1);
+    if(maxP <= 1 || (n <= 300 && maxP <= 4))  {
+        free(W1);
+    }
     free(W2);
     free(W3);
 

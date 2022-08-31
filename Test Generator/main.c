@@ -67,14 +67,14 @@ void writeGraph(FILE *fp, int **G, int *omega, int *owner, int n) {
 
 
 int main(int argc, char **argv) {
-    int tTotal = 40; //total number of tests to be generated in each category
+    int tTotal = 15; //total number of tests to be generated in each category
     int tCount; //current number of tests generated
     char tName[50]; //name of the test file we are creating
     char tNumber[6]; //test number, translated to string
 
     FILE *fp;
 
-    int n, nMin, nMax = 250;
+    int n, nMin, nMax = 300;
     int eMax; //max number of outgoing edges
     int e;
     int *owners; //array of vertex owners
@@ -87,9 +87,9 @@ int main(int argc, char **argv) {
 
     srand(time(NULL));
 
-    //Create 40 random tests with 0-2000 nodes
+    //Create 15 random tests with 0-1000 nodes
     for(tCount = 0; tCount < tTotal; tCount++) {
-        nMin = 250 * (tCount / 10); //every 10 tests we change nMin
+        nMin = 300 * (tCount / 5); //every 5 tests we change nMin
 
         n = 1 + nMin + rand() % nMax; //generate a random number of vertices between nMin and nMin+nMax 
 
@@ -97,7 +97,10 @@ int main(int argc, char **argv) {
         omega = (int *) malloc(n * sizeof(int));
         G = (int **) malloc(n * sizeof(int *));
 
-        oMax = rand() % 10 + 1;
+        if(n < 300) {
+            oMax = rand() % 4 + 1; //this is to make sure we have some tests that are apropriate for pgSolver1
+        }
+        else oMax = rand() % 10 + 1;
 
         for(i=0; i<n; i++) {
             owners[i] = rand() % 2; //owners are either 0(P2) or 1(P1)
@@ -150,9 +153,9 @@ int main(int argc, char **argv) {
 
 
 
-    //Create 40 random bipartite symmetric tests with 0-2000 nodes
+    //Create 15 random bipartite symmetric tests with 0-1000 nodes
     for(tCount = 0; tCount < tTotal; tCount++) {
-        nMin = 250 * (tCount / 10); //every 10 tests we change nMin
+        nMin = 300 * (tCount / 5); //every 5 tests we change nMin
 
         n = 1 + nMin + rand() % nMax; //generate a random number of vertices between nMin and nMin+nMax 
 
@@ -160,7 +163,10 @@ int main(int argc, char **argv) {
         omega = (int *) malloc(n * sizeof(int));
         G = (int **) malloc(n * sizeof(int *));
 
-        oMax = rand() % 10 + 1;
+        if(n < 300) {
+            oMax = rand() % 4 + 1; //this is to make sure we have some tests that are apropriate for pgSolver1
+        }
+        else oMax = rand() % 10 + 1;
 
         P1Count = rand() % n;
         if(P1Count == 0) {
@@ -176,7 +182,7 @@ int main(int argc, char **argv) {
         }
 
         for(i=0; i<n; i++) {
-            omega[i] = rand() % oMax; //maximum priority is 9
+            omega[i] = rand() % oMax; 
 
             if(i < P1Count) {
                 owners[i] = 1;

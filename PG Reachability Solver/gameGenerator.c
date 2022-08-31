@@ -116,7 +116,7 @@ long **createPG(FILE *file, long *n, long nMax, long pMax) {
             token = strtok(NULL, " ,;");
             G[v][1] = toNumber(token); //the priority of the vertex v
             if(G[v][1] > pMax) {
-                //We only consider test cases in which the maximum number of iterations for the mpgSubgraphSolver loop can be stored in long long
+                //The maximum priority of the graph is higher than the one we set
                 free(inputLine);
                 freeGraph(v+1, G);
                 *n = -1;
