@@ -5,7 +5,8 @@ void initSheet(lxw_worksheet *worksheet) {
     worksheet_set_column(worksheet, 0, 9, 15, NULL);
 
     worksheet_merge_range(worksheet, 0, 0, 0, 4, "Tests", NULL);
-    worksheet_merge_range(worksheet, 0, 5, 0, 7, "Execution Time(s)", NULL);
+    worksheet_merge_range(worksheet, 0, 5, 0, 7, "Execution Time (s)", NULL);
+    worksheet_merge_range(worksheet, 0, 8, 1, 8, "Solution verification", NULL);
 
 
     worksheet_write_string(worksheet, 1, 0, "Set", NULL);
@@ -28,6 +29,7 @@ int main(int argc, char **argv) {
 
     int tCount = 0;
 
+    
     tCount = benchmarkTestSet("Keiren Tests", 1000, 10, 15, tCount, workbook, worksheet);
 
     tCount = benchmarkTestSet("Random Tests", 1000, 10, 15, tCount, workbook, worksheet);

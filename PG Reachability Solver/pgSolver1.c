@@ -30,7 +30,7 @@ long long *getMu(long **G, long n, long M) {
     mu = (long long *) malloc(n * sizeof(long long));
     verify_alloc(mu);
     for(long i=0; i<n; i++) {
-        mu[i] = power(-M, G[i][1]);
+        mu[i] = power(-n, G[i][1]);
     }
     return mu;
 }
