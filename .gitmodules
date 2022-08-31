@@ -1,3 +1,6 @@
 [submodule "PG Reachability Solver/libxlsxwriter"]
 	path = PG Reachability Solver/libxlsxwriter
 	url = https://github.com/jmcnamara/libxlsxwriter.git
+[submodule "libxlsxwriter"]
+	path = libxlsxwriter
+	url = https://github.com/jmcnamara/libxlsxwriter.git
